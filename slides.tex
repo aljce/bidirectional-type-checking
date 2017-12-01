@@ -1,13 +1,35 @@
 \documentclass{beamer}
+\usepackage{bussproofs}
 \usetheme{metropolis}
 \title{Bidirectional Type Checking}
-\date{\today}
+\date{4 December 2017}
 \author{Kyle McKean}
 \institute{Reed Student Colloquium}
 \begin{document}
   \maketitle
-  \section{First Section}
-  \begin{frame}{First Frame}
-    Hello, world!
+  \begin{frame}{Universes}
+    \RightLabel{$\mathbb{U}$ formation}
+    \AxiomC{$n \in \mathbb{N}$}
+    \UnaryInfC{$\mathbb{U}_{S(n)} \ni \mathbb{U}_n$}
+    \DisplayProof
+    % \AxiomC{
+  \end{frame}
+  \begin{frame}{Unit Type}
+    \RightLabel{$\top$ formation}
+    \AxiomC{}
+    \UnaryInfC{$\mathbb{U}_0 \ni \top$}
+    \DisplayProof
+    \RightLabel{$\top introduction$}
+    \AxiomC{}
+    \UnaryInfC{$\top \ni tt$}
+    \DisplayProof
+    \RightLabel{$\top$ elimination}
+
+    \AxiomC{$n \in \mathbb{N}$}
+    \AxiomC{$\Gamma \vdash A : \mathbb{U}_n $}
+    \AxiomC{$\Gamma \vdash x : A$}
+    \AxiomC{$\Gamma \vdash u : \top$}
+    \QuaternaryInfC{$A \ni absorb_A(u,x)$}
+    \DisplayProof
   \end{frame}
 \end{document}
