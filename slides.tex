@@ -14,22 +14,33 @@
     \DisplayProof
     % \AxiomC{
   \end{frame}
-  \begin{frame}{Unit Type}
+  \begin{frame}{True Type}
     \RightLabel{$\top$ formation}
     \AxiomC{}
     \UnaryInfC{$\mathbb{U}_0 \ni \top$}
     \DisplayProof
-    \RightLabel{$\top introduction$}
+    \RightLabel{$\top$ introduction}
     \AxiomC{}
     \UnaryInfC{$\top \ni tt$}
     \DisplayProof
     \RightLabel{$\top$ elimination}
-
-    \AxiomC{$n \in \mathbb{N}$}
-    \AxiomC{$\Gamma \vdash A : \mathbb{U}_n $}
     \AxiomC{$\Gamma \vdash x : A$}
     \AxiomC{$\Gamma \vdash u : \top$}
-    \QuaternaryInfC{$A \ni absorb_A(u,x)$}
+    \BinaryInfC{$A \ni absorb_A(u,x)$}
     \DisplayProof
+  \end{frame}
+  \begin{frame}{False Type}
+    \RightLabel{$\bot$ formation}
+    \AxiomC{}
+    \UnaryInfC{$\mathbb{U}_0 \ni \bot$}
+    \DisplayProof
+    \RightLabel{$\bot$ elimination}
+    \AxiomC{$\Gamma \vdash A : \mathbb{U}_0$}
+    \AxiomC{$\Gamma \vdash e : \bot$}
+    \BinaryInfC{$A \ni absurd_A(e)$}
+    \DisplayProof
+  \end{frame}
+  \begin{frame}{Conjunction Type}
+    \RightLabel{$\land$ formation}
   \end{frame}
 \end{document}
