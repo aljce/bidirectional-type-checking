@@ -1,4 +1,4 @@
-\documentclass{beamer}
+\documentclass[usenames,dvipsnames]{beamer}
 \usepackage{amsmath}
 \usepackage{mathtools}
 \usepackage{bussproofs}
@@ -34,6 +34,12 @@
 \newcommand{\wfterm}[1]{\wfjudge{#1}{term}}
 \newcommand{\wfelim}[1]{\wfjudge{#1}{elim}}
 
+\newcommand{\type}[1]{\ensuremath{\mbb{U}_{#1}}}
+\newcommand{\Type}[0]{\type{{}}}
+
+\newcommand{\BCheck}[2]{\ensuremath{#1 \Leftarrow #2}}
+\newcommand{\BSynth}[2]{\ensuremath{#1 \Rightarrow #2}}
+\newcommand{\mv}[1]{{\color{BrickRed} #1}}
 \begin{document}
   \maketitle
   \section{Meta-Theory}
@@ -45,19 +51,24 @@
        & \pipe \wfterm{\star} \\
        & \pipe \wfelim{\star} \\
        & \pipe \nonterm{ctx} \vdash \nonterm{judgment} \\
-       & \pipe \nonterm{elim} \Leftarrow \nonterm{term} \\
-       & \pipe \nonterm{term} \Rightarrow \nonterm{term} \\
+       & \pipe \BCheck{\nonterm{elim}}{\nonterm{term}} \\
+       & \pipe \BSynth{\nonterm{term}}{\nonterm{term}} \\
    \end{align*}
 
-   $\star$ = an arbitrary list of non terminals and strings
+   \begin{center}
+     $\star$ = an arbitrary string of meta-variables and characters
+   \end{center}
 
   \end{frame}
   \begin{frame}{Universes}
-    \RightLabel{$\mathbb{U}$ formation}
-    \AxiomC{$n \in \mathbb{N}$}
-    \UnaryInfC{$\mathbb{U}_{S(n)} \ni \mathbb{U}_n$}
+    \RightLabel{\Type formation}
+    \AxiomC{\wflevel{\mv{n}}}
+    \UnaryInfC{\wfterm{\type{\mv{n}}}}
     \DisplayProof
-    % \AxiomC{
+    \RightLabel{\Type introduction}
+    \AxiomC{}
+    \UnaryInfC{\BCheck{\type{\mrm{s}(\mv{n})}}{\type{\mv{n}}}}
+    \DisplayProof
   \end{frame}
   \begin{frame}{True Type}
     \RightLabel{$\top$ formation}
@@ -89,18 +100,3 @@
     \RightLabel{$\land$ formation}
   \end{frame}
 \end{document}
-<string>
-    : any string of characters that isn't a metavar
-
-<metavar>
-    : a | b | ... | A | B | ...
-
-<any>
-    : <string> | <metavar> | <any> <any>
-
-<judge>
-    : <any> [u]ctx[/u]
-    | <any> [u]term[/u]
-    | <any> [u]elim[/u]
-    | <ctx> ⊢ <judge>
-    | <elim> ∈ <term>
