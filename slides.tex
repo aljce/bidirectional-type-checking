@@ -25,49 +25,31 @@
 \newcommand{\msr}[1]{\ensuremath{\mathscr{#1}}}    % Script
 \newcommand{\mfr}[1]{\ensuremath{\mathfrak{#1}}}   % Fraktur
 
-\newcommand{\nonterm}[1]{\ensuremath{\langle \mathrm{#1} \rangle}}
-\newcommand{\wf-judge}[1]{\ensuremath{\star \: \msf{\underline{#1}}}}
 \newcommand{\ceq}[0]{\Coloneqq}
 \newcommand{\pipe}[0]{\ensuremath{\mspace{8.5mu}\mid\mspace{8.5mu}}}
-
+\newcommand{\nonterm}[1]{\ensuremath{\langle \msf{#1} \rangle}}
+\newcommand{\wfjudge}[2]{\ensuremath{#1 \: \msf{\underline{#2}}}}
+\newcommand{\wflevel}[1]{\wfjudge{#1}{level}}
+\newcommand{\wfctx}[1]{\wfjudge{#1}{ctx}}
+\newcommand{\wfterm}[1]{\wfjudge{#1}{term}}
+\newcommand{\wfelim}[1]{\wfjudge{#1}{elim}}
 
 \begin{document}
   \maketitle
   \section{Meta-Theory}
-  \begin{frame}{Judgements}
-      % % <metavar> ::= a | b | ... | A | B | ...
-      % <metavar> ::= `a'
-
-
-      % % <string> ::= any string of characters that isn't a metavar
-      % <string> ::= `b'
+  \begin{frame}{Judgments}
    \begin{align*}
-      \nonterm{judgement} & \wf-judge{ctx} \\
-      {}                  & \pipe \square \\
-      {}                  & \pipe \square
-    \end{align*}
+     \nonterm{judgment}
+       & \ceq  \wflevel{\star} \\
+       & \pipe \wfctx{\star} \\
+       & \pipe \wfterm{\star} \\
+       & \pipe \wfelim{\star} \\
+       & \pipe \nonterm{ctx} \vdash \nonterm{judgment} \\
+       & \pipe \nonterm{elim} \Leftarrow \nonterm{term} \\
+       & \pipe \nonterm{term} \Rightarrow \nonterm{term} \\
+   \end{align*}
 
-% <any>
-%     : <string> | <metavar> | <any> <any>
-
-% <judge>
-%     : <any> ctx
-%     | <any> term
-%     | <any> elim
-%     | <ctx> ⊢ <judge>
-%     | <elim> ∈ <term>
-%     | <term> ∋ <term>
-%     | <term> ∋ <elim>
-    
-    % <any> ::=
-    %   <string>
-    %   \alt <metavar>
-    %   \alt <any> <any>
-    %   \alt <any> \underline{term}
-    %   \alt <any> \underline{elim}
-    %   \alt <ctx> $\vdash$ <judge>
-    %   \alt <elim> $\Leftarrow$ <term>
-    %   \alt <term> $\Rightarrow$ <term>
+   $\star$ = an arbitrary list of non terminals and strings
 
   \end{frame}
   \begin{frame}{Universes}
