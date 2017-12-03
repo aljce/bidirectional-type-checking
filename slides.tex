@@ -1,41 +1,74 @@
 \documentclass{beamer}
-\usepackage{syntax}
+\usepackage{amsmath}
+\usepackage{mathtools}
 \usepackage{bussproofs}
 \usetheme{metropolis}
 \title{Bidirectional Type Checking}
 \date{4 December 2017}
 \author{Kyle McKean}
 \institute{Reed Student Colloquium}
+
+\newcommand{\textbs}[1]{{\sffamily\fontseries{sbc}\selectfont #1}}
+
+\newcommand{\mathbs}[1]{\ensuremath{\text{\textbs{#1}}}}
+\renewcommand{\mathtt}[1]{\ensuremath{\texttt{#1}}}
+
+\newcommand{\mrs}[1]{\ensuremath{\mathnormal{#1}}} % Reset font to normal
+\newcommand{\mbf}[1]{\ensuremath{\mathbf{#1}}}     % Boldface
+\newcommand{\mbs}[1]{\ensuremath{\mathbs{#1}}}     % Bold + sans-serif
+\newcommand{\mbb}[1]{\ensuremath{\mathbb{#1}}}     % Blackboard bold
+\newcommand{\mtt}[1]{\ensuremath{\mathtt{#1}}}     % Teletype
+\newcommand{\mrm}[1]{\ensuremath{\mathrm{#1}}}     % Serif ("roman")
+\newcommand{\msf}[1]{\ensuremath{\mathsf{#1}}}     % Sans-serif
+\newcommand{\msc}[1]{\ensuremath{\mathsc{#1}}}     % Small-caps
+\newcommand{\mcl}[1]{\ensuremath{\mathcal{#1}}}    % Calligraphic
+\newcommand{\msr}[1]{\ensuremath{\mathscr{#1}}}    % Script
+\newcommand{\mfr}[1]{\ensuremath{\mathfrak{#1}}}   % Fraktur
+
+\newcommand{\nonterm}[1]{\ensuremath{\langle \mathrm{#1} \rangle}}
+\newcommand{\wf-judge}[1]{\ensuremath{\star \: \msf{\underline{#1}}}}
+\newcommand{\ceq}[0]{\Coloneqq}
+\newcommand{\pipe}[0]{\ensuremath{\mspace{8.5mu}\mid\mspace{8.5mu}}}
+
+
 \begin{document}
   \maketitle
   \section{Meta-Theory}
   \begin{frame}{Judgements}
-    \begin{grammar}
       % % <metavar> ::= a | b | ... | A | B | ...
       % <metavar> ::= `a'
 
 
       % % <string> ::= any string of characters that isn't a metavar
       % <string> ::= `b'
+   \begin{align*}
+      \nonterm{judgement} & \wf-judge{ctx} \\
+      {}                  & \pipe \square \\
+      {}                  & \pipe \square
+    \end{align*}
 
-      % <any> ::= <string>
-      %   \alt <metavar>
-      %   \alt <any> <any>
+% <any>
+%     : <string> | <metavar> | <any> <any>
 
-      % <judge> ::= <any> `\underline{ctx}'
-      %   \alt <any> `\underline{term}'
-      %   \alt <any> `\underline{elim}'
-      %   \alt <ctx> `$\vdash$' <judge>
-      %   \alt <elim> `$\Leftarrow$' <term>
-      %   \alt <term> `$\Rightarrow$' <term>
+% <judge>
+%     : <any> ctx
+%     | <any> term
+%     | <any> elim
+%     | <ctx> ⊢ <judge>
+%     | <elim> ∈ <term>
+%     | <term> ∋ <term>
+%     | <term> ∋ <elim>
+    
+    % <any> ::=
+    %   <string>
+    %   \alt <metavar>
+    %   \alt <any> <any>
+    %   \alt <any> \underline{term}
+    %   \alt <any> \underline{elim}
+    %   \alt <ctx> $\vdash$ <judge>
+    %   \alt <elim> $\Leftarrow$ <term>
+    %   \alt <term> $\Rightarrow$ <term>
 
-      <statement> ::= <ident> ‘=’ <expr>
-        \alt ‘for’ <ident> ‘=’ <expr> ‘to’ <expr> ‘do’ <statement>
-        \alt ‘{’ <stat-list> ‘}’
-        \alt <empty>
-
-      <stat-list> ::= <statement> ‘;’ <stat-list> | <statement>
-    \end{grammar}
   \end{frame}
   \begin{frame}{Universes}
     \RightLabel{$\mathbb{U}$ formation}
