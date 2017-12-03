@@ -1,4 +1,5 @@
 \documentclass{beamer}
+\usepackage{syntax}
 \usepackage{bussproofs}
 \usetheme{metropolis}
 \title{Bidirectional Type Checking}
@@ -7,6 +8,35 @@
 \institute{Reed Student Colloquium}
 \begin{document}
   \maketitle
+  \section{Meta-Theory}
+  \begin{frame}{Judgements}
+    \begin{grammar}
+      % % <metavar> ::= a | b | ... | A | B | ...
+      % <metavar> ::= `a'
+
+
+      % % <string> ::= any string of characters that isn't a metavar
+      % <string> ::= `b'
+
+      % <any> ::= <string>
+      %   \alt <metavar>
+      %   \alt <any> <any>
+
+      % <judge> ::= <any> `\underline{ctx}'
+      %   \alt <any> `\underline{term}'
+      %   \alt <any> `\underline{elim}'
+      %   \alt <ctx> `$\vdash$' <judge>
+      %   \alt <elim> `$\Leftarrow$' <term>
+      %   \alt <term> `$\Rightarrow$' <term>
+
+      <statement> ::= <ident> ‘=’ <expr>
+        \alt ‘for’ <ident> ‘=’ <expr> ‘to’ <expr> ‘do’ <statement>
+        \alt ‘{’ <stat-list> ‘}’
+        \alt <empty>
+
+      <stat-list> ::= <statement> ‘;’ <stat-list> | <statement>
+    \end{grammar}
+  \end{frame}
   \begin{frame}{Universes}
     \RightLabel{$\mathbb{U}$ formation}
     \AxiomC{$n \in \mathbb{N}$}
@@ -44,3 +74,18 @@
     \RightLabel{$\land$ formation}
   \end{frame}
 \end{document}
+<string>
+    : any string of characters that isn't a metavar
+
+<metavar>
+    : a | b | ... | A | B | ...
+
+<any>
+    : <string> | <metavar> | <any> <any>
+
+<judge>
+    : <any> [u]ctx[/u]
+    | <any> [u]term[/u]
+    | <any> [u]elim[/u]
+    | <ctx> ⊢ <judge>
+    | <elim> ∈ <term>
