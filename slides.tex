@@ -3,6 +3,7 @@
 \usepackage{mathtools}
 \usepackage{bussproofs}
 \usetheme{metropolis}
+\usefonttheme[onlymath]{serif}
 \title{Bidirectional Type Checking}
 \date{4 December 2017}
 \author{Kyle McKean}
@@ -61,14 +62,18 @@
 
   \end{frame}
   \begin{frame}{Universes}
+    \begin{prooftree}
     \RightLabel{\Type formation}
     \AxiomC{\wflevel{\mv{n}}}
     \UnaryInfC{\wfterm{\type{\mv{n}}}}
-    \DisplayProof
+    \end{prooftree}
+    % \DisplayProof
+    \begin{prooftree}
     \RightLabel{\Type introduction}
     \AxiomC{}
     \UnaryInfC{\BCheck{\type{\mrm{s}(\mv{n})}}{\type{\mv{n}}}}
-    \DisplayProof
+    \end{prooftree}
+    % \DisplayProof
   \end{frame}
   \begin{frame}{True Type}
     \RightLabel{$\top$ formation}
