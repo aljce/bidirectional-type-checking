@@ -4,7 +4,7 @@
 \usepackage{bussproofs}
 \usetheme{metropolis}
 \usefonttheme[onlymath]{serif}
-\title{Bidirectional Type Checking}
+\title{Bidirectional Type Theory}
 \date{4 December 2017}
 \author{Kyle McKean}
 \institute{Reed Student Colloquium}
@@ -26,10 +26,13 @@
 \newcommand{\msr}[1]{\ensuremath{\mathscr{#1}}}    % Script
 \newcommand{\mfr}[1]{\ensuremath{\mathfrak{#1}}}   % Fraktur
 
+\newcommand{\parens}[1]{\ensuremath{(\mspace{1mu} #1 \mspace{1mu})}}
+\newcommand{\nonneg}[0]{\ensuremath{\mbb{R}_{\geq 0}}}
+
 \newcommand{\ceq}[0]{\Coloneqq}
 \newcommand{\pipe}[0]{\ensuremath{\mspace{8.5mu}\mid\mspace{8.5mu}}}
 \newcommand{\nonterm}[1]{\ensuremath{\langle \msf{#1} \rangle}}
-\newcommand{\wfjudge}[2]{\ensuremath{{#1} \: \msf{\underline{#2}}}}
+\newcommand{\wfjudge}[2]{\ensuremath{{#1} \: \mbf{#2}}}
 \newcommand{\wfvar}[1]{\wfjudge{#1}{var}}
 \newcommand{\wflevel}[1]{\wfjudge{#1}{level}}
 \newcommand{\wfctx}[1]{\wfjudge{#1}{ctx}}
@@ -45,7 +48,7 @@
 \newcommand{\type}[1]{\ensuremath{\mbb{U}_{#1}}}
 \newcommand{\Type}[0]{\type{{}}}
 
-\newcommand{\exfalso}[1]{\ensuremath{\mrm{exfalso}(#1)}}
+\newcommand{\exfalso}[1]{\ensuremath{\mrm{exfalso}(#1 \mspace{2mu} )}}
 
 \newcommand{\unit}[0]{\ensuremath{\mrm{tt}}}
 
@@ -53,19 +56,20 @@
 
 \newcommand{\lam}[2]{\ensuremath{\lambda #1 . #2}}
 
-\newcommand{\embed}[1]{\ensuremath{\{#1 \mspace{2mu} \}}}
+\newcommand{\embed}[1]{\ensuremath{\underline{#1}}}
 
 \newcommand{\typeOf}[2]{\ensuremath{#1 \dblcolon #2}}
 
 \newcommand{\app}[2]{\ensuremath{#1 \: #2}}
 \newcommand{\subst}[4]{\ensuremath{#1[#2 := \typeOf{#3}{#4}]}}
 
-\newcommand{\checkType}[2]{\ensuremath{#1 \Leftarrow_c #2}}
+\newcommand{\checkType}[2]{\ensuremath{#2 \Leftarrow_c #1}}
 \newcommand{\synthType}[2]{\ensuremath{#1 \Rightarrow_s #2}}
 \newcommand{\reduceTo}[2]{\ensuremath{#1 \rightsquigarrow #2}}
 
 \newcommand{\var}[1]{{\color{NavyBlue} #1}}
 \newcommand{\vx}[0]{\var{x}}
+\newcommand{\va}[0]{\var{a}}
 
 \newcommand{\mv}[1]{{\color{BrickRed} #1}}
 \newcommand{\mA}[0]{\mv{A}}
@@ -95,9 +99,22 @@
 \newcommand{\compName}[1]{#1-comp}
 \newcommand{\compLabel}[1]{\RightLabel{\compName{#1}}}
 \newcommand{\compSmall}[1]{\compLabel{\scriptsize{#1}}}
+\newcommand{\smallLabel}[1]{{\RightLabel{\scriptsize{#1}}}}
 
 \begin{document}
   \maketitle
+  \section{Basic Type Theory}
+  \begin{frame}{The Typing Relation}
+    \begin{itemize}
+    \large{
+      \setlength\itemsep{1em}
+      \item $0 \in \mbb{N} \Leftrightarrow 0 : \mbb{N}$ 
+      \item $\mbb{N} \in \bold{S} \Leftrightarrow \mbb{N} : \bold{Type}$ 
+      \item $\checkType{\mbb{N}}{0}$
+      \item $\synthType{\pi}{\mbb{R}}$
+    }
+    \end{itemize}
+  \end{frame}
   \section{Introduction To Natural Deduction}
   \begin{frame}{Levels}
     \begin{prooftree}
@@ -154,12 +171,20 @@
         \UnaryInfC{$\wflevel{\succesor{\succesor{0}}}$}
     \end{prooftree}
   \end{frame}
+  \begin{frame}{A Proof With Contexts}
+    \begin{prooftree}
+      \AxiomC{$x : \mbb{R} \vdash \checkType{\nonneg}{x^{\mspace{2mu 2}}}$}
+      \AxiomC{$\varepsilon \vdash \checkType{\mbb{R}}{3}$}
+      \BinaryInfC{$\varepsilon \vdash \checkType{\nonneg}{3^{\mspace{2mu} 2}}$}
+    \end{prooftree}
+  \end{frame}
   \section{Meta-Theory}
-  \begin{frame}{Judgments}
+  \begin{frame}{Judgements}
     \small
     \begin{align*}
+      \mspace{6mu}
       \nonterm{var}
-        & \ceq  a \pipe b \pipe c \pipe ... \:
+        & \ceq  a \pipe b \pipe c \pipe \dots
     \end{align*}
     \begin{align*}
       \nonterm{judgement}
@@ -177,16 +202,26 @@
       $\star$ = an arbitrary string of meta-variables and characters
     \end{center}
   \end{frame}
+  \begin{frame}{Inference Rules}
+    \begin{prooftree}
+      \AxiomC{$J_1$}
+      \AxiomC{$J_2$}
+      \AxiomC{$\ldots$}
+      \AxiomC{$J_{n-1}$}
+      \AxiomC{$J_n$}
+      \QuinaryInfC{$J$}
+    \end{prooftree}
+  \end{frame}
   \begin{frame}{Contexts}
     \begin{prooftree}
-      \formLabel{$\epsilon$}
+      \formLabel{$\varepsilon$}
       \AxiomC{}
-      \UnaryInfC{$\wfctx{\epsilon}$}
+      \UnaryInfC{$\wfctx{\varepsilon}$}
     \end{prooftree}
     \begin{prooftree}
       \formLabel{colon}
       \AxiomC{$\wfvar{\vx}$}
-      \AxiomC{$\wfelim{\mA}$}
+      \AxiomC{$\wfterm{\mA}$}
       \BinaryInfC{$\wfctx{\vx : \mA}$}
     \end{prooftree}
     \begin{prooftree}
@@ -207,8 +242,8 @@
     \end{prooftree}
     \begin{prooftree}
       \RightLabel{comma-contraction}
-      \AxiomC{$\wfctx{\Gamma, x : A, x : A}$}
-      \UnaryInfC{$\wfctx{\Gamma, x : A}$}
+      \AxiomC{$\wfctx{\Gamma, \vx : \mA, \vx : \mA}$}
+      \UnaryInfC{$\wfctx{\Gamma, \vx : \mA}$}
     \end{prooftree} 
   \end{frame}
   \begin{frame}{Equality}
@@ -218,14 +253,14 @@
       \UnaryInfC{$\ctx{A \equiv A}$}
     \end{prooftree}
     \begin{prooftree}
-      \RightLabel{symmetric}
+      \RightLabel{symmetry}
       \AxiomC{$\ctx{A \equiv B}$}
       \UnaryInfC{$\ctx{B \equiv A}$}
     \end{prooftree}
     \begin{prooftree}
-      \RightLabel{transitive}
+      \RightLabel{transitivity}
       \AxiomC{$\ctx{A \equiv B}$}
-      \AxiomC{$\ctx{B \equiv A}$}
+      \AxiomC{$\ctx{B \equiv C}$}
       \BinaryInfC{$\ctx{A \equiv C}$}
     \end{prooftree}
   \end{frame}
@@ -241,29 +276,6 @@
       \checkLabel{$\Type$}
       \AxiomC{}
       \UnaryInfC{$\ctx{\checkType{\type{\succesor{\mn}}}{\type{\mn}}}$}
-    \end{prooftree}
-  \end{frame}
-  \begin{frame}{False Type}
-    \begin{prooftree}
-      \formLabel{$\bot$}
-      \AxiomC{}
-      \UnaryInfC{$\ctx{\wfterm{\bot}}$}
-    \end{prooftree}
-    \begin{prooftree}
-      \formLabel{exfalso}
-      \AxiomC{$\ctx{\wfterm{\me}}$}
-      \UnaryInfC{$\ctx{\wfterm{\exfalso{\me}}}$}
-    \end{prooftree}
-    \begin{prooftree}
-      \checkLabel{$\bot$}
-      \AxiomC{}
-      \UnaryInfC{$\ctx{\checkType{\type{0}}{\bot}}$}
-    \end{prooftree}
-    \begin{prooftree}
-      \checkLabel{exfalso}
-      \AxiomC{$\ctx{\mC : \type{\mn}}$}
-      \AxiomC{$\ctx{\me : \bot}$}
-      \BinaryInfC{$\ctx{\checkType{\mC}{\exfalso{\me}}}$}
     \end{prooftree}
   \end{frame}
   \begin{frame}{True Type}
@@ -288,46 +300,114 @@
       \UnaryInfC{$\ctx{\checkType{\top}{\unit}$}}
     \end{prooftree} 
   \end{frame}
+  \begin{frame}{False Type}
+    \begin{prooftree}
+      \formLabel{$\bot$}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{\wfterm{\bot}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \formLabel{exfalso}
+      \AxiomC{$\ctx{\wfterm{\me}}$}
+      \UnaryInfC{$\ctx{\wfterm{\exfalso{\me}}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \checkLabel{$\bot$}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{\checkType{\type{0}}{\bot}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \checkLabel{exfalso}
+      \AxiomC{$\ctx{\checkType{\type{\mn}}}{\mC}$}
+      \AxiomC{$\ctx{\checkType{\bot}{\me}}$}
+      \BinaryInfC{$\ctx{\checkType{\mC}{\exfalso{\me}}}$}
+    \end{prooftree}
+  \end{frame}
   \begin{frame}{Pi Types}
     \begin{prooftree}
       \formLabel{$\prod$}
       \AxiomC{$\ctx{\wfterm{\mA}}$}
       \AxiomC{$\ctxWith{\vx}{\mA}{\wfterm{\mB}}$}
-      \BinaryInfC{$\ctx{\wfterm{\piType{\vx}{\mA}{\mB}}}$}
+      \BinaryInfC{$\ctx{\wfterm{\parens{\piType{\vx}{\mA}{\mB}}}}$}
     \end{prooftree}
     \begin{prooftree}
       \checkLabel{$\prod$}
       \AxiomC{$\ctx{\checkType{\type{\mn}}{\mA}}$}
       \AxiomC{$\ctxWith{\vx}{\mA}{\checkType{\type{\mm}}{\mB}}$}
-      \BinaryInfC{$\ctx{\checkType{\type{\maximum{\mn}{\mm}}}{\piType{\vx}{\mA}{\mB}}}$}
+      \BinaryInfC{$\ctx{\checkType{\type{\maximum{\mn}{\mm}}}{\parens{\piType{\vx}{\mA}{\mB}}}}$}
     \end{prooftree}
   \end{frame}
   \begin{frame}{Functions}
     \begin{prooftree}
       \formLabel{$\lambda$}
       \AxiomC{$\ctxWith{\vx}{\mA}{\wfterm{\mb}}$}
-      \UnaryInfC{$\ctx{\wfterm{\lam{\vx}{\mb}}}$}
+      \UnaryInfC{$\ctx{\wfterm{\parens{\lam{\vx}{\mb}}}}$}
     \end{prooftree}
     \begin{prooftree}
       \checkLabel{$\lambda$}
       \AxiomC{$\ctxWith{\vx}{\mA}{\checkType{\mB}{\mb}}$}
-      \UnaryInfC{$\ctx{\checkType{\piType{\vx}{\mA}{\mB}}{\lam{\vx}{\mb}}}$}
+      \UnaryInfC{$\ctx{\checkType{\piType{\vx}{\mA}{\mB}}{\parens{\lam{\vx}{\mb}}}}$}
     \end{prooftree}
   \end{frame}
   \begin{frame}{Embedding}
     \begin{prooftree}
-      \formLabel{$\{\}$}
-      \AxiomC{$\ctx{\wfelim{\me}}$}
-      \UnaryInfC{$\ctx{\wfterm{\embed{\me}}}$}
+      \formLabel{embed}
+      \AxiomC{$\ctx{\wfelim{\me \mspace{1mu}}}$}
+      \UnaryInfC{$\ctx{\wfterm{\underline{\me \mspace{2mu}}}}$}
     \end{prooftree}
     \begin{prooftree}
-      \checkLabel{$\{\}$}
+      \checkLabel{embed}
       \AxiomC{$\ctx{\synthType{\me}{\mA}}$}
       \AxiomC{$\ctx{\mA \equiv \mB}$}
-      \BinaryInfC{$\ctx{\checkType{\mB}{\embed{\me}}}$}
+      \BinaryInfC{$\ctx{\checkType{\mB}{\underline{\me \mspace{2mu}}}}$}
     \end{prooftree}
   \end{frame}
   \section{Eliminators}
+  \begin{frame}{Variables}
+    \begin{prooftree}
+      \formLabel{var}
+      \AxiomC{$\wfvar{\vx}$}
+      \UnaryInfC{$\ctx{\wfelim{\vx}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \synthLabel{var}
+      \AxiomC{}
+      \UnaryInfC{$\ctxWith{\vx}{\mA}{\synthType{\vx}{\mA}}$}
+    \end{prooftree}
+  \end{frame}
+  \section{An Actual Proof}
+  \begin{frame}{Tautologies}
+    \begin{equation*}
+      \forall x \in P. \: x \to x
+    \end{equation*} 
+    \begin{prooftree}
+      \tiny
+      \synthSmall{var}
+      \AxiomC{}
+      \UnaryInfC{$\vx : \type{0} \vdash \synthType{\vx}{\type{0}}$}
+      \smallLabel{reflexivity}
+      \AxiomC{}
+      \UnaryInfC{$\varepsilon \vdash \type{0} \equiv \type{0}$}
+      \checkSmall{embed}
+      \BinaryInfC{$\vx : \type{0} \vdash \checkType{\type{0}}{\embed{\vx}}$}
+      \synthSmall{var}
+      \UnaryInfC{$\vx : \type{0}, \va : \embed{\vx} \vdash \synthType{\va}{\embed{\vx}}$}
+      \smallLabel{reflexivity}
+      \AxiomC{}
+      \UnaryInfC{$\varepsilon \vdash \embed{x} \equiv \embed{x}$}
+      \checkSmall{embed}
+      \BinaryInfC{$\vx : \type{0}, \va : \embed{\vx} \vdash \checkType{\embed{\vx}}{\embed{\va}}$}
+      \checkSmall{$\lambda$}
+      \UnaryInfC{$\vx : \type{0} \vdash \checkType{\piType{\va}{\embed{\vx}}{\embed{\vx}}}{\lam{\va}{\embed{\va}}}$}
+      \checkSmall{$\lambda$}
+      \UnaryInfC{$
+        \varepsilon \vdash
+        \checkType
+          {\piType{\vx}{\type{0}}{\piType{\va}{\embed{\vx}}{\embed{\vx}}}}
+          {\lam{\vx}{\lam{\va}{\embed{\va}}}}$}
+    \end{prooftree}
+  \end{frame}
+  \section{More Eliminators}
   \begin{frame}{Type of}
     \begin{prooftree}
       \formLabel{$\dblcolon$}
@@ -345,18 +425,6 @@
       \compLabel{$\dblcolon$}
       \AxiomC{}
       \UnaryInfC{$\ctx{\reduceTo{\embed{\typeOf{\ma}{\mA}}}{\ma}}$}
-    \end{prooftree}
-  \end{frame}
-  \begin{frame}{Variables}
-    \begin{prooftree}
-      \formLabel{var}
-      \AxiomC{$\wfvar{\vx}$}
-      \UnaryInfC{$\ctx{\wfelim{\vx}}$}
-    \end{prooftree}
-    \begin{prooftree}
-      \synthLabel{var}
-      \AxiomC{}
-      \UnaryInfC{$\ctxWith{\vx}{\mA}{\synthType{\vx}{\mA}}$}
     \end{prooftree}
   \end{frame}
   \begin{frame}{Function Application}
@@ -384,16 +452,111 @@
   \end{frame}
   \begin{frame}{Computation}
     \begin{prooftree}
-      \RightLabel{check-comp}
+      \RightLabel{type-check-comp}
       \AxiomC{$\ctx{\checkType{\mA}{\ma}}$}
       \AxiomC{$\ctx{\mA \rightsquigarrow \mB}$}
       \BinaryInfC{$\ctx{\checkType{\mB}{\ma}}$}
     \end{prooftree}
     \begin{prooftree}
-      \RightLabel{synth-comp}
+      \RightLabel{term-check-comp}
+      \AxiomC{$\ctx{\checkType{\mA}{\ma}}$}
+      \AxiomC{$\ctx{\ma \rightsquigarrow \mb}$}
+      \BinaryInfC{$\ctx{\checkType{\mA}{\mb}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \RightLabel{type-synth-comp}
       \AxiomC{$\ctx{\synthType{\ma}{\mA}}$}
       \AxiomC{$\ctx{\mA \rightsquigarrow \mB}$}
       \BinaryInfC{$\ctx{\synthType{\ma}{\mB}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \RightLabel{term-synth-comp}
+      \AxiomC{$\ctx{\synthType{\embed{\ma}}{\mA}}$}
+      \AxiomC{$\ctx{\ma \rightsquigarrow \mb}$}
+      \BinaryInfC{$\ctx{\synthType{\embed{\mb}}{\mA}}$}
+    \end{prooftree}
+
+  \end{frame}
+  \begin{frame}{Putting it All Together}
+    \begin{prooftree}
+      \tiny
+      \AxiomC{$
+        \varepsilon \vdash
+        \synthType
+          {\typeOf
+            {\lam{\vx}{\lam{\va}{\embed{\va}}}}
+            {\piType{\vx}{\type{0}}{\piType{\va}{\embed{\vx}}{\embed{\vx}}}}}
+          {\piType{\vx}{\type{0}}{\piType{\va}{\embed{\vx}}{\embed{\vx}}}}$}
+      \AxiomC{}
+      \UnaryInfC{$\varepsilon \vdash \checkType{\type{0}}{\top}$}
+      \BinaryInfC{$
+        \varepsilon \vdash
+        \synthType
+          {\app
+            {\parens{\typeOf
+              {\lam{\vx}{\lam{\va}{\embed{\va}}}}
+              {\piType{\vx}{\type{0}}{\piType{\va}{\embed{\vx}}{\embed{\vx}}}}}}
+            {\top}}
+          {\piType{\va}{\embed{\typeOf{\top}{\type{0}}}}{\embed{\typeOf{\top}{\type{0}}}}}$}
+      \UnaryInfC{$
+        \varepsilon \vdash
+        \synthType
+          {\app
+            {\parens{\typeOf
+              {\lam{\vx}{\lam{\va}{\embed{\va}}}}
+              {\piType{\vx}{\type{0}}{\piType{\va}{\embed{\vx}}{\embed{\vx}}}}}}
+            {\top}}
+          {\piType{\va}{\top}{\top}}$}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{\checkType{\top}{\unit}$}}
+      \BinaryInfC{$
+        \varepsilon \vdash
+        \synthType
+          {\app
+            {\parens{\app
+              {\parens{\typeOf
+                {\lam{\vx}{\lam{\va}{\embed{\va}}}}
+                {\piType{\vx}{\type{0}}{\piType{\va}{\embed{\vx}}{\embed{\vx}}}}}}
+              {\top}}}
+            {\unit}}
+          {\top}
+      $}
+      \UnaryInfC{$
+        \varepsilon \vdash
+        \synthType
+          {\app
+            {\parens{\typeOf
+              {\lam{\va}{\embed{\va}}}
+              {\piType{\va}{\embed{\typeOf{\top}{\type{0}}}}{\embed{\typeOf{\top}{\type{0}}}}}}}
+            {\unit}}
+          {\top}
+      $}
+      \UnaryInfC{$
+        \varepsilon \vdash
+        \synthType
+          {\app
+            {\parens{\typeOf
+              {\lam{\va}{\embed{\va}}}
+              {\piType{\va}{\top}{\top}}
+            }}
+            {\unit}}
+          {\top}
+      $}
+      \UnaryInfC{$
+        \varepsilon \vdash
+        \synthType
+          {\typeOf
+            {\embed{\typeOf{\unit}{\top}}}
+            {\top}
+          }
+          {\top}
+      $}
+      \UnaryInfC{$
+        \varepsilon \vdash
+        \synthType
+          {\typeOf{\unit}{\top}}
+          {\top}
+      $}
     \end{prooftree}
   \end{frame}
 \end{document}
