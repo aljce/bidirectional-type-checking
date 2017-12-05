@@ -29,7 +29,7 @@
 \newcommand{\ceq}[0]{\Coloneqq}
 \newcommand{\pipe}[0]{\ensuremath{\mspace{8.5mu}\mid\mspace{8.5mu}}}
 \newcommand{\nonterm}[1]{\ensuremath{\langle \msf{#1} \rangle}}
-\newcommand{\wfjudge}[2]{\ensuremath{#1 \: \msf{\underline{#2}}}}
+\newcommand{\wfjudge}[2]{\ensuremath{{#1} \: \msf{\underline{#2}}}}
 \newcommand{\wfvar}[1]{\wfjudge{#1}{var}}
 \newcommand{\wflevel}[1]{\wfjudge{#1}{level}}
 \newcommand{\wfctx}[1]{\wfjudge{#1}{ctx}}
@@ -211,8 +211,24 @@
       \UnaryInfC{$\wfctx{\Gamma, x : A}$}
     \end{prooftree} 
   \end{frame}
-  % \begin{frame}{}
-  % \end{frame}
+  \begin{frame}{Equality}
+    \begin{prooftree}
+      \RightLabel{reflexivity}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{A \equiv A}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \RightLabel{symmetric}
+      \AxiomC{$\ctx{A \equiv B}$}
+      \UnaryInfC{$\ctx{B \equiv A}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \RightLabel{transitive}
+      \AxiomC{$\ctx{A \equiv B}$}
+      \AxiomC{$\ctx{B \equiv A}$}
+      \BinaryInfC{$\ctx{A \equiv C}$}
+    \end{prooftree}
+  \end{frame}
   \section{Terms}
   \begin{frame}{Universes}
     \begin{prooftree}
@@ -307,11 +323,10 @@
     \begin{prooftree}
       \checkLabel{$\{\}$}
       \AxiomC{$\ctx{\synthType{\me}{\mA}}$}
-      \AxiomC{$\mA \equiv \mB$}
+      \AxiomC{$\ctx{\mA \equiv \mB}$}
       \BinaryInfC{$\ctx{\checkType{\mB}{\embed{\me}}}$}
     \end{prooftree}
   \end{frame}
-
   \section{Eliminators}
   \begin{frame}{Type of}
     \begin{prooftree}
@@ -361,22 +376,23 @@
       \compLabel{app}
       \AxiomC{}
       \UnaryInfC{$
-        \embed{\app{(\typeOf{\lam{\vx}{\mb}}{\piType{\vx}{\mA}{\mB}})}{a}}
-        \rightsquigarrow
-        \embed{\typeOf{\subst{\mb}{\vx}{\ma}{\mA}}{\subst{\mB}{\vx}{\ma}{\mA}}}$}
+        \ctx{
+          \embed{\app{(\typeOf{\lam{\vx}{\mb}}{\piType{\vx}{\mA}{\mB}})}{a}}
+          \rightsquigarrow
+          \embed{\typeOf{\subst{\mb}{\vx}{\ma}{\mA}}{\subst{\mB}{\vx}{\ma}{\mA}}}}$}
     \end{prooftree}
   \end{frame}
   \begin{frame}{Computation}
     \begin{prooftree}
       \RightLabel{check-comp}
       \AxiomC{$\ctx{\checkType{\mA}{\ma}}$}
-      \AxiomC{$\mA \rightsquigarrow \mB$}
+      \AxiomC{$\ctx{\mA \rightsquigarrow \mB}$}
       \BinaryInfC{$\ctx{\checkType{\mB}{\ma}}$}
     \end{prooftree}
     \begin{prooftree}
       \RightLabel{synth-comp}
       \AxiomC{$\ctx{\synthType{\ma}{\mA}}$}
-      \AxiomC{$\mA \rightsquigarrow \mB$}
+      \AxiomC{$\ctx{\mA \rightsquigarrow \mB}$}
       \BinaryInfC{$\ctx{\synthType{\ma}{\mB}}$}
     \end{prooftree}
   \end{frame}
