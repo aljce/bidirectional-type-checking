@@ -30,78 +30,354 @@
 \newcommand{\pipe}[0]{\ensuremath{\mspace{8.5mu}\mid\mspace{8.5mu}}}
 \newcommand{\nonterm}[1]{\ensuremath{\langle \msf{#1} \rangle}}
 \newcommand{\wfjudge}[2]{\ensuremath{#1 \: \msf{\underline{#2}}}}
+\newcommand{\wfvar}[1]{\wfjudge{#1}{var}}
 \newcommand{\wflevel}[1]{\wfjudge{#1}{level}}
 \newcommand{\wfctx}[1]{\wfjudge{#1}{ctx}}
 \newcommand{\wfterm}[1]{\wfjudge{#1}{term}}
 \newcommand{\wfelim}[1]{\wfjudge{#1}{elim}}
 
+\newcommand{\ctx}[1]{\ensuremath{\Gamma \vdash #1}}
+\newcommand{\ctxWith}[3]{\ensuremath{\Gamma , #1 : #2 \vdash #3}}
+
+\newcommand{\succesor}[1]{\ensuremath{\mrm{s}(#1)}}
+\newcommand{\maximum}[2]{\ensuremath{\mrm{max}(#1,#2)}}
+
 \newcommand{\type}[1]{\ensuremath{\mbb{U}_{#1}}}
 \newcommand{\Type}[0]{\type{{}}}
 
-\newcommand{\BCheck}[2]{\ensuremath{#1 \Leftarrow #2}}
-\newcommand{\BSynth}[2]{\ensuremath{#1 \Rightarrow #2}}
+\newcommand{\exfalso}[1]{\ensuremath{\mrm{exfalso}(#1)}}
+
+\newcommand{\unit}[0]{\ensuremath{\mrm{tt}}}
+
+\newcommand{\piType}[3]{\ensuremath{\prod_{#1 \: : \: #2}{#3}}}
+
+\newcommand{\lam}[2]{\ensuremath{\lambda #1 . #2}}
+
+\newcommand{\embed}[1]{\ensuremath{\{#1 \mspace{2mu} \}}}
+
+\newcommand{\typeOf}[2]{\ensuremath{#1 \dblcolon #2}}
+
+\newcommand{\app}[2]{\ensuremath{#1 \: #2}}
+\newcommand{\subst}[4]{\ensuremath{#1[#2 := \typeOf{#3}{#4}]}}
+
+\newcommand{\checkType}[2]{\ensuremath{#1 \Leftarrow_c #2}}
+\newcommand{\synthType}[2]{\ensuremath{#1 \Rightarrow_s #2}}
+\newcommand{\reduceTo}[2]{\ensuremath{#1 \rightsquigarrow #2}}
+
+\newcommand{\var}[1]{{\color{NavyBlue} #1}}
+\newcommand{\vx}[0]{\var{x}}
+
 \newcommand{\mv}[1]{{\color{BrickRed} #1}}
+\newcommand{\mA}[0]{\mv{A}}
+\newcommand{\mB}[0]{\mv{B}}
+\newcommand{\mC}[0]{\mv{C}}
+\newcommand{\mD}[0]{\mv{D}}
+\newcommand{\mE}[0]{\mv{E}}
+\newcommand{\mF}[0]{\mv{F}}
+\newcommand{\ma}[0]{\mv{a}}
+\newcommand{\mb}[0]{\mv{b}}
+\newcommand{\mc}[0]{\mv{c}}
+\newcommand{\md}[0]{\mv{d}}
+\newcommand{\me}[0]{\mv{e}}
+\newcommand{\mf}[0]{\mv{f}}
+\newcommand{\mn}[0]{\mv{n}}
+\newcommand{\mm}[0]{\mv{m}}
+
+\newcommand{\formName}[1]{#1-formation}
+\newcommand{\formLabel}[1]{\RightLabel{\formName{#1}}}
+\newcommand{\formSmall}[1]{\formLabel{\scriptsize{#1}}}
+\newcommand{\checkName}[1]{#1-check}
+\newcommand{\checkLabel}[1]{\RightLabel{\checkName{#1}}}
+\newcommand{\checkSmall}[1]{\checkLabel{\scriptsize{#1}}}
+\newcommand{\synthName}[1]{#1-synthesize}
+\newcommand{\synthLabel}[1]{\RightLabel{\synthName{#1}}}
+\newcommand{\synthSmall}[1]{\synthLabel{\scriptsize{#1}}}
+\newcommand{\compName}[1]{#1-comp}
+\newcommand{\compLabel}[1]{\RightLabel{\compName{#1}}}
+\newcommand{\compSmall}[1]{\compLabel{\scriptsize{#1}}}
+
 \begin{document}
   \maketitle
+  \section{Introduction To Natural Deduction}
+  \begin{frame}{Levels}
+    \begin{prooftree}
+      \formLabel{0}
+      \AxiomC{}
+      \UnaryInfC{$\wflevel{0}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \formLabel{s}
+      \AxiomC{$\wflevel{\mn}$}
+      \UnaryInfC{$\wflevel{\succesor{\mn}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \formLabel{max}
+      \AxiomC{$\wflevel{\mn}$}
+      \AxiomC{$\wflevel{\mm}$}
+      \BinaryInfC{$\wflevel{\maximum{\mn}{\mm}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \compLabel{max-n-m}
+      \AxiomC{$\wflevel{\maximum{\succesor{\mn}}{\succesor{\mm}}}$}
+      \UnaryInfC{$\wflevel{\succesor{\maximum{\mn}{\mm}}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \compLabel{max-n-0}
+      \AxiomC{$\wflevel{\maximum{\mn}{0}}$}
+      \UnaryInfC{$\wflevel{\mn}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \compLabel{max-0-n}
+      \AxiomC{$\wflevel{\maximum{0}{\mn}}$}
+      \UnaryInfC{$\wflevel{\mn}$}
+    \end{prooftree}
+  \end{frame}
+  \begin{frame}{Sample Proof}
+    \begin{prooftree}
+      \formSmall{0}
+      \AxiomC{}
+      \UnaryInfC{$\wflevel{0}$}
+      \formSmall{s}
+      \UnaryInfC{$\wflevel{\succesor{0}}$}
+      \formSmall{s}
+      \UnaryInfC{$\wflevel{\succesor{\succesor{0}}}$}
+        \formSmall{0}
+        \AxiomC{}
+        \UnaryInfC{$\wflevel{0}$}
+        \formSmall{s}
+        \UnaryInfC{$\wflevel{\succesor{0}}$}
+        \formSmall{max}
+        \BinaryInfC{$\wflevel{\maximum{\succesor{\succesor{0}}}{\succesor{0}}}$}
+        \compSmall{max-n-m}
+        \UnaryInfC{$\wflevel{\succesor{\maximum{\succesor{0}}0}}$}
+        \compSmall{max-n-0}
+        \UnaryInfC{$\wflevel{\succesor{\succesor{0}}}$}
+    \end{prooftree}
+  \end{frame}
   \section{Meta-Theory}
   \begin{frame}{Judgments}
-   \begin{align*}
-     \nonterm{judgment}
-       & \ceq  \wflevel{\star} \\
-       & \pipe \wfctx{\star} \\
-       & \pipe \wfterm{\star} \\
-       & \pipe \wfelim{\star} \\
-       & \pipe \nonterm{ctx} \vdash \nonterm{judgment} \\
-       & \pipe \BCheck{\nonterm{elim}}{\nonterm{term}} \\
-       & \pipe \BSynth{\nonterm{term}}{\nonterm{term}} \\
-   \end{align*}
-
-   \begin{center}
-     $\star$ = an arbitrary string of meta-variables and characters
-   \end{center}
-
+    \small
+    \begin{align*}
+      \nonterm{var}
+        & \ceq  a \pipe b \pipe c \pipe ... \:
+    \end{align*}
+    \begin{align*}
+      \nonterm{judgement}
+        & \ceq  \wfvar{\nonterm{var}} \\
+        & \pipe \wflevel{\star} \\
+        & \pipe \wfctx{\star} \\
+        & \pipe \nonterm{ctx} \vdash \wfterm{\star} \\
+        & \pipe \nonterm{ctx} \vdash \wfelim{\star} \\
+        & \pipe \nonterm{ctx} \vdash \reduceTo{\nonterm{term}}{\nonterm{term}} \\
+        & \pipe \nonterm{ctx} \vdash \nonterm{term} \equiv \nonterm{term} \\
+        & \pipe \nonterm{ctx} \vdash \checkType{\nonterm{term}}{\nonterm{term}} \\
+        & \pipe \nonterm{ctx} \vdash \synthType{\nonterm{elim}}{\nonterm{term}}
+    \end{align*}
+    \begin{center}
+      $\star$ = an arbitrary string of meta-variables and characters
+    \end{center}
   \end{frame}
+  \begin{frame}{Contexts}
+    \begin{prooftree}
+      \formLabel{$\epsilon$}
+      \AxiomC{}
+      \UnaryInfC{$\wfctx{\epsilon}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \formLabel{colon}
+      \AxiomC{$\wfvar{\vx}$}
+      \AxiomC{$\wfelim{\mA}$}
+      \BinaryInfC{$\wfctx{\vx : \mA}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \formLabel{comma}
+      \AxiomC{$\wfctx{\Gamma}$}
+      \AxiomC{$\wfctx{\Delta}$}
+      \BinaryInfC{$\wfctx{\Gamma , \Delta}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \RightLabel{comma-assoc}
+      \AxiomC{$\wfctx{(\Gamma , \Delta) , \Lambda}$}
+      \UnaryInfC{$\wfctx{\Gamma , (\Delta , \Lambda)}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \RightLabel{comma-comm}
+      \AxiomC{$\wfctx{\Gamma, \Delta}$}
+      \UnaryInfC{$\wfctx{\Delta, \Gamma}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \RightLabel{comma-contraction}
+      \AxiomC{$\wfctx{\Gamma, x : A, x : A}$}
+      \UnaryInfC{$\wfctx{\Gamma, x : A}$}
+    \end{prooftree} 
+  \end{frame}
+  % \begin{frame}{}
+  % \end{frame}
+  \section{Terms}
   \begin{frame}{Universes}
     \begin{prooftree}
-    \RightLabel{\Type formation}
-    \AxiomC{\wflevel{\mv{n}}}
-    \UnaryInfC{\wfterm{\type{\mv{n}}}}
+      \formLabel{$\Type$}
+      \AxiomC{$\wflevel{\mn}$}
+      \UnaryInfC{$\ctx{\wfterm{\type{\mn}}}$}
     \end{prooftree}
-    % \DisplayProof
+    \vspace{2em}
     \begin{prooftree}
-    \RightLabel{\Type introduction}
-    \AxiomC{}
-    \UnaryInfC{\BCheck{\type{\mrm{s}(\mv{n})}}{\type{\mv{n}}}}
+      \checkLabel{$\Type$}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{\checkType{\type{\succesor{\mn}}}{\type{\mn}}}$}
     \end{prooftree}
-    % \DisplayProof
-  \end{frame}
-  \begin{frame}{True Type}
-    \RightLabel{$\top$ formation}
-    \AxiomC{}
-    \UnaryInfC{$\mathbb{U}_0 \ni \top$}
-    \DisplayProof
-    \RightLabel{$\top$ introduction}
-    \AxiomC{}
-    \UnaryInfC{$\top \ni tt$}
-    \DisplayProof
-    \RightLabel{$\top$ elimination}
-    \AxiomC{$\Gamma \vdash x : A$}
-    \AxiomC{$\Gamma \vdash u : \top$}
-    \BinaryInfC{$A \ni absorb_A(u,x)$}
-    \DisplayProof
   \end{frame}
   \begin{frame}{False Type}
-    \RightLabel{$\bot$ formation}
-    \AxiomC{}
-    \UnaryInfC{$\mathbb{U}_0 \ni \bot$}
-    \DisplayProof
-    \RightLabel{$\bot$ elimination}
-    \AxiomC{$\Gamma \vdash A : \mathbb{U}_0$}
-    \AxiomC{$\Gamma \vdash e : \bot$}
-    \BinaryInfC{$A \ni absurd_A(e)$}
-    \DisplayProof
+    \begin{prooftree}
+      \formLabel{$\bot$}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{\wfterm{\bot}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \formLabel{exfalso}
+      \AxiomC{$\ctx{\wfterm{\me}}$}
+      \UnaryInfC{$\ctx{\wfterm{\exfalso{\me}}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \checkLabel{$\bot$}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{\checkType{\type{0}}{\bot}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \checkLabel{exfalso}
+      \AxiomC{$\ctx{\mC : \type{\mn}}$}
+      \AxiomC{$\ctx{\me : \bot}$}
+      \BinaryInfC{$\ctx{\checkType{\mC}{\exfalso{\me}}}$}
+    \end{prooftree}
   \end{frame}
-  \begin{frame}{Conjunction Type}
-    \RightLabel{$\land$ formation}
+  \begin{frame}{True Type}
+    \begin{prooftree}
+      \formLabel{$\top$}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{\wfterm{\top}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \formLabel{tt}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{\wfterm{\unit}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \checkLabel{$\top$}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{\checkType{\type{0}}{\top}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \checkLabel{tt}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{\checkType{\top}{\unit}$}}
+    \end{prooftree} 
+  \end{frame}
+  \begin{frame}{Pi Types}
+    \begin{prooftree}
+      \formLabel{$\prod$}
+      \AxiomC{$\ctx{\wfterm{\mA}}$}
+      \AxiomC{$\ctxWith{\vx}{\mA}{\wfterm{\mB}}$}
+      \BinaryInfC{$\ctx{\wfterm{\piType{\vx}{\mA}{\mB}}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \checkLabel{$\prod$}
+      \AxiomC{$\ctx{\checkType{\type{\mn}}{\mA}}$}
+      \AxiomC{$\ctxWith{\vx}{\mA}{\checkType{\type{\mm}}{\mB}}$}
+      \BinaryInfC{$\ctx{\checkType{\type{\maximum{\mn}{\mm}}}{\piType{\vx}{\mA}{\mB}}}$}
+    \end{prooftree}
+  \end{frame}
+  \begin{frame}{Functions}
+    \begin{prooftree}
+      \formLabel{$\lambda$}
+      \AxiomC{$\ctxWith{\vx}{\mA}{\wfterm{\mb}}$}
+      \UnaryInfC{$\ctx{\wfterm{\lam{\vx}{\mb}}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \checkLabel{$\lambda$}
+      \AxiomC{$\ctxWith{\vx}{\mA}{\checkType{\mB}{\mb}}$}
+      \UnaryInfC{$\ctx{\checkType{\piType{\vx}{\mA}{\mB}}{\lam{\vx}{\mb}}}$}
+    \end{prooftree}
+  \end{frame}
+  \begin{frame}{Embedding}
+    \begin{prooftree}
+      \formLabel{$\{\}$}
+      \AxiomC{$\ctx{\wfelim{\me}}$}
+      \UnaryInfC{$\ctx{\wfterm{\embed{\me}}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \checkLabel{$\{\}$}
+      \AxiomC{$\ctx{\synthType{\me}{\mA}}$}
+      \AxiomC{$\mA \equiv \mB$}
+      \BinaryInfC{$\ctx{\checkType{\mB}{\embed{\me}}}$}
+    \end{prooftree}
+  \end{frame}
+
+  \section{Eliminators}
+  \begin{frame}{Type of}
+    \begin{prooftree}
+      \formLabel{$\dblcolon$}
+      \AxiomC{$\ctx{\wfterm{\ma}}$}
+      \AxiomC{$\ctx{\wfterm{\mA}}$}
+      \BinaryInfC{$\ctx{\wfelim{\typeOf{\ma}{\mA}}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \synthLabel{$\dblcolon$}
+      \AxiomC{$\ctx{\checkType{\type{\mn}}{\mA}}$}
+      \AxiomC{$\ctx{\checkType{\mA}{\ma}}$}
+      \BinaryInfC{$\ctx{\synthType{\typeOf{\ma}{\mA}}{\mA}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \compLabel{$\dblcolon$}
+      \AxiomC{}
+      \UnaryInfC{$\ctx{\reduceTo{\embed{\typeOf{\ma}{\mA}}}{\ma}}$}
+    \end{prooftree}
+  \end{frame}
+  \begin{frame}{Variables}
+    \begin{prooftree}
+      \formLabel{var}
+      \AxiomC{$\wfvar{\vx}$}
+      \UnaryInfC{$\ctx{\wfelim{\vx}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \synthLabel{var}
+      \AxiomC{}
+      \UnaryInfC{$\ctxWith{\vx}{\mA}{\synthType{\vx}{\mA}}$}
+    \end{prooftree}
+  \end{frame}
+  \begin{frame}{Function Application}
+    \begin{prooftree}
+      \formLabel{app}
+      \AxiomC{$\ctx{\wfelim{\mf}}$}
+      \AxiomC{$\ctx{\wfterm{\ma}}$}
+      \BinaryInfC{$\ctx{\wfelim{\app{\mf}{\ma}}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \synthLabel{app}
+      \AxiomC{$\ctx{\synthType{\mf}{\piType{\vx}{\mA}{\mB}}}$}
+      \AxiomC{$\ctx{\checkType{\mA}{\ma}}$}
+      \BinaryInfC{$\ctx{\synthType{\app{\mf}{\ma}}{\subst{\mB}{\vx}{\ma}{\mA}}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \compLabel{app}
+      \AxiomC{}
+      \UnaryInfC{$
+        \embed{\app{(\typeOf{\lam{\vx}{\mb}}{\piType{\vx}{\mA}{\mB}})}{a}}
+        \rightsquigarrow
+        \embed{\typeOf{\subst{\mb}{\vx}{\ma}{\mA}}{\subst{\mB}{\vx}{\ma}{\mA}}}$}
+    \end{prooftree}
+  \end{frame}
+  \begin{frame}{Computation}
+    \begin{prooftree}
+      \RightLabel{check-comp}
+      \AxiomC{$\ctx{\checkType{\mA}{\ma}}$}
+      \AxiomC{$\mA \rightsquigarrow \mB$}
+      \BinaryInfC{$\ctx{\checkType{\mB}{\ma}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \RightLabel{synth-comp}
+      \AxiomC{$\ctx{\synthType{\ma}{\mA}}$}
+      \AxiomC{$\mA \rightsquigarrow \mB$}
+      \BinaryInfC{$\ctx{\synthType{\ma}{\mB}}$}
+    \end{prooftree}
   \end{frame}
 \end{document}
