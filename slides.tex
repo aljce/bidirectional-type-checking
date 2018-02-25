@@ -377,9 +377,10 @@
   \end{frame}
   \section{An Actual Proof}
   \begin{frame}{Tautologies}
-    \begin{equation*}
-      \forall x \in P. \: x \to x
-    \end{equation*} 
+    \begin{align*}
+      \Aboxed{\forall x \in P. \: x \to x}
+    \end{align*} 
+    \vspace{0.05cm}
     \begin{prooftree}
       \tiny
       \synthSmall{var}
@@ -420,6 +421,11 @@
       \AxiomC{$\ctx{\checkType{\type{\mn}}{\mA}}$}
       \AxiomC{$\ctx{\checkType{\mA}{\ma}}$}
       \BinaryInfC{$\ctx{\synthType{\typeOf{\ma}{\mA}}{\mA}}$}
+    \end{prooftree}
+    \begin{prooftree}
+      \checkLabel{$\dblcolon$}
+      \AxiomC{$\ctx{\synthType{\typeOf{\ma}{\mA}}{\mA}}$}
+      \UnaryInfC{$\ctx{\checkType{\mA}{\ma}}$}
     \end{prooftree}
     \begin{prooftree}
       \compLabel{$\dblcolon$}
@@ -475,7 +481,6 @@
       \AxiomC{$\ctx{\ma \rightsquigarrow \mb}$}
       \BinaryInfC{$\ctx{\synthType{\embed{\mb}}{\mA}}$}
     \end{prooftree}
-
   \end{frame}
   \begin{frame}{Putting it All Together}
     \begin{prooftree}
@@ -508,7 +513,7 @@
             {\top}}
           {\piType{\va}{\top}{\top}}$}
       \AxiomC{}
-      \UnaryInfC{$\ctx{\checkType{\top}{\unit}$}}
+      \UnaryInfC{$\varepsilon \vdash \checkType{\top}{\unit}$}
       \BinaryInfC{$
         \varepsilon \vdash
         \synthType
@@ -553,9 +558,15 @@
       $}
       \UnaryInfC{$
         \varepsilon \vdash
-        \synthType
-          {\typeOf{\unit}{\top}}
+        \checkType
           {\top}
+          {\embed{\typeOf{\unit}{\top}}}
+      $}
+      \UnaryInfC{$
+        \varepsilon \vdash
+        \checkType
+          {\top}
+          {\unit}
       $}
     \end{prooftree}
   \end{frame}
